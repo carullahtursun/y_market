@@ -2,17 +2,22 @@ const Order = require('../models/Order');
 const Product = require('../models/Product');
 
 module.exports.createOrder = async (req, res) => {
-  const { userId, products, provider, amount, address, status, deliveryCode } = req.body;
+  const { userId, products, provider, amount, address, status, deliveryCode, startDate, endDate } = req.body;
   console.log(req.body);
   try {
     const order = new Order({
       userId,
-      products,
+      products: products.map(item => ({
+        product: item._id,
+        quantity: item.cartQuantity
+      })),
       provider,
       amount,
       address,
       status,
-      deliveryCode
+      deliveryCode,
+      startDate,
+      endDate
     });
 
     const newOrder = await order.save();
@@ -22,26 +27,6 @@ module.exports.createOrder = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
-/* module.exports.updateOrder = async (req, res) => {
-  try {
-    const updatedOrder = await Order.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: req.body
-      },
-      {
-        new: true
-      });
-    res.status(200).json({
-      message: "Order is updated successfully.",
-      updatedOrder
-    });
-  } catch (err) {
-    res.status(500).json(err);
-  }
-}; */
-
 
 module.exports.updateOrder = async (req, res) => {
   const { id } = req.params;
@@ -54,7 +39,10 @@ module.exports.updateOrder = async (req, res) => {
       res.status(404).json({ message: 'Order not found' });
     } else {
       order.userId = userId || order.userId;
-      order.products = products || order.products;
+      order.products = products.map(item => ({
+        product: item._id,
+        quantity: item.cartQuantity
+      })) || order.products;
       order.provider = provider || order.provider;
       order.amount = amount || order.amount;
       order.address = address || order.address;
@@ -80,47 +68,11 @@ module.exports.deleteOrder = async (req, res) => {
   }
 };
 
-/* module.exports.getUserOrders = async (req, res) => {
-  try {
-    const orders = await Order.find({
-      userId: req.params.userId
-    }).populate('userId').populate('provider').populate('productId');
-    res.status(200).json(orders);
-  } catch (error) {
-    res.status(500).json(error);
-  }
-}; */
-
-/* module.exports.getUserOrders = async (req, res, next) => {
-  try {
-    const userId = req.params.userId; // Assuming the user ID is in the URL parameter
-    const orders = await Order.find({ userId: userId })
-      .populate('userId');
-    res.status(200).json(orders);
-  } catch (err) {
-    next(err);
-  }
-} */
-
-
-/* module.exports.getOrders = async (req, res, next) => {
-  try {
-    const orders = await Order.find()
-      .populate('userId').populate("provider")
-    res.status(200).json(orders);
-  } catch (err) {
-    next(err);
-  }
-} */
-
-
-
-
 module.exports.getUserOrderById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const order = await Order.findById(id);
+    const order = await Order.findById(id).populate('products.product').populate('userId').populate("provider");
 
     if (!order) {
       res.status(404).json({ message: 'Order not found' });
@@ -135,21 +87,19 @@ module.exports.getUserOrderById = async (req, res) => {
 
 module.exports.getOrders = async (req, res) => {
   try {
-    const orders = await Order.find().populate('products').populate('userId').populate("provider");
+    const orders = await Order.find().populate('products.product').populate('userId').populate("provider");
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json(error);
   }
 };
 
-
-
 module.exports.getOrderByProviderId = async (req, res) => {
   const { id } = req.params;
- 
+
   try {
-    const order = await Order.find({ provider: id }).populate('products').populate('userId').populate("provider");
-  
+    const order = await Order.find({ provider: id }).populate('products.product').populate('userId').populate("provider");
+
     if (!order) {
       res.status(404).json({ message: 'Order not found' });
     } else {
@@ -171,8 +121,8 @@ module.exports.getMonthlyIncome = async (req, res) => {
       { $match: { createdAt: { $gte: prevMonthDate } } },
       {
         $project: {
-          month: { $month: '$createdAt' }, // Add a new field (month) with the $month of $createdAt
-          sales: "$amount" // Rename the field amount to sales
+          month: { $month: '$createdAt' },
+          sales: "$amount"
         }
       },
       {
@@ -189,6 +139,24 @@ module.exports.getMonthlyIncome = async (req, res) => {
     res.status(500).json(error);
   }
 };
+/* module.exports.updateOrder = async (req, res) => {
+  try {
+    const updatedOrder = await Order.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: req.body
+      },
+      {
+        new: true
+      });
+    res.status(200).json({
+      message: "Order is updated successfully.",
+      updatedOrder
+    });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+}; */
 
 
 /* const Order = require('../models/Order');
@@ -291,3 +259,36 @@ module.exports.deleteOrder = async (req, res) => {
   }
 };
  */
+
+/* module.exports.getUserOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({
+      userId: req.params.userId
+    }).populate('userId').populate('provider').populate('productId');
+    res.status(200).json(orders);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+}; */
+
+/* module.exports.getUserOrders = async (req, res, next) => {
+  try {
+    const userId = req.params.userId; // Assuming the user ID is in the URL parameter
+    const orders = await Order.find({ userId: userId })
+      .populate('userId');
+    res.status(200).json(orders);
+  } catch (err) {
+    next(err);
+  }
+} */
+
+
+/* module.exports.getOrders = async (req, res, next) => {
+  try {
+    const orders = await Order.find()
+      .populate('userId').populate("provider")
+    res.status(200).json(orders);
+  } catch (err) {
+    next(err);
+  }
+} */

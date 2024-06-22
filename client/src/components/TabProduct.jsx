@@ -14,26 +14,24 @@ function TabProduct({ userID }) {
 
 
     const { currentUser } = useSelector((store) => store.auth);
-    const [isClick, setİsClick] = useState(1)
+    const [isClick, setIsClick] = useState(1)
 
-    console.log(currentUser, "cccc");
-    //  console.log(userID, 'tab user ıd');
     return (
 
         <div>
-            <div className={`${currentUser?.isAdmin ? "grid-cols-2" :"grid-cols-3"} grid  gap-5`}>
-                <button
+            <div className={`${currentUser?.isAdmin ? "grid-cols-2" :"grid-cols-2"} grid  gap-5`}>
+                {/*<button
                     className={` p-4 rounded  ${isClick == 1 ? 'bg-sky-500 text-white ' : 'bg-white text-black'} shadow-md flex items-center justify-center`}
-                    onClick={(e) => setİsClick(1)}
+                    onClick={(e) => setIsClick(1)}
                 >
                     <Inventory />
                     Satiş
-                </button>
+                </button>*/}
 
 
                 <button
-                    className={` p-4 rounded  ${isClick == 2 ? 'bg-sky-500 text-white ' : 'bg-white text-black'} shadow-md flex items-center justify-center`}
-                    onClick={(e) => setİsClick(2)}
+                    className={` p-4 rounded  ${isClick == 1 ? 'bg-sky-500 text-white ' : 'bg-white text-black'} shadow-md flex items-center justify-center`}
+                    onClick={(e) => setIsClick(1)}
                 >
                     <FavoriteBorderRounded />
 
@@ -43,8 +41,8 @@ function TabProduct({ userID }) {
                     !currentUser.isAdmin && 
 
                         <button
-                            className={` p-4 rounded  ${isClick == 3 ? 'bg-sky-500 text-white ' : 'bg-white text-black'} shadow-md flex items-center justify-center`}
-                            onClick={(e) => setİsClick(3)}
+                            className={` p-4 rounded  ${isClick == 2 ? 'bg-sky-500 text-white ' : 'bg-white text-black'} shadow-md flex items-center justify-center`}
+                            onClick={(e) => setIsClick(2)}
                         >
                             <Inventory />
                             Spariş
@@ -54,13 +52,13 @@ function TabProduct({ userID }) {
 
             </div>
 
-            {
+           {/* {
                 isClick == 1 && <div className='mt-5'>
                     <UserProduct userID={userID} />
                 </div>
-            }
+            }*/}
             {
-                isClick == 2 && <div className='mt-5'>
+                isClick == 1 && <div className='mt-5'>
 
                     <LikeProduct userID={userID} />
                 </div>
@@ -69,7 +67,7 @@ function TabProduct({ userID }) {
             {
               
 
-                    isClick == 3 && <div className='mt-5'>
+                    isClick == 2 && <div className='mt-5'>
 
                         <UserOrders userID={userID} />
                     </div>

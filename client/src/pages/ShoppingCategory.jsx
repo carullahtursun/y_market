@@ -11,18 +11,17 @@ import Title from '../components/Title';
 import Filter from '../components/Filter'
 
 const ShoppingCategory = () => {
-  const { category } = useParams();
-  const [title, setTitle] = useState('')
-  return (
-    <>
-      
-      <Title>{`${category.charAt(0).toUpperCase()}${category.slice(1)}`}</Title>
-      <Filter setTitle={setTitle} />
-      <Products category={category} title={title} />
-      <Newsletter />
-      
-    </>
-  );
+    const [title, setTitle] = useState('');
+    const [category, setCategory] = useState('');
+
+    return (
+        <>
+            <Title>{`${category.charAt(0).toUpperCase()}${category.slice(1)}`}</Title>
+            <Filter setTitle={setTitle} setCategory={setCategory} category={category} />
+            <Products category={category} title={title} />
+            <Newsletter />
+        </>
+    );
 };
 
 export default ShoppingCategory;

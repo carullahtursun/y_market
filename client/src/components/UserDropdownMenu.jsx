@@ -12,153 +12,116 @@ function UserDropdownMenu({ currentUser, totalQantity }) {
     const [isOpen, setIsOpen] = useState(false);
     const dispatch = useDispatch();
     const cart = useSelector((store) => store.cart);
+
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
+
     const logoutHandler = () => {
-        dispatch(logout())
-    }
+        dispatch(logout());
+    };
 
     useEffect(() => {
-        dispatch(getTotals())
-    }, [cart])
+        dispatch(getTotals());
+    }, [cart, dispatch]);
+
     return (
-        <div className="relative ">
+        <div className="relative">
             <button
-                className="flex items-center text-sm font-medium  text-gray-700 hover:text-gray-900 focus:outline-none focus:underline"
+                className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:underline"
                 onClick={toggleMenu}
             >
-
-
-                {
-                    currentUser ? (
-                        <>
-                            <Badge
-                                badgeContent={`${totalQantity}`}
-                                color='error'
-                                className='cursor-pointer hover:text-rose-600 mx-5'
-                            >
-
-                                <img
-                                    className="w-8 h-8 rounded-full "
-                                    src={`${currentUser.image ? currentUser.image : "https://images.unsplash.com/photo-1610397095767-84a5b4736cbd?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"}`}
-                                    alt=""
-                                />
-
-                            </Badge>
-                            <span className="hidden sm:inline">{currentUser?.username}</span>
-                        </>
-                    ) : (
-
-                        <Link
-                            className="block px-4 py-2 space-x-2 text-sm  text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                            to='/login'>
-
-                            <LoginIcon/>
-                            Giriş yap
-                        </Link>
-                    )
-
-
-                }
-
+                {currentUser ? (
+                    <>
+                        <Badge
+                            badgeContent={`${totalQantity || 0}`}
+                            color="error"
+                            className="cursor-pointer hover:text-rose-600 mx-5"
+                        >
+                            <img
+                                className="w-8 h-8 rounded-full"
+                                src={`${currentUser.image ? currentUser.image : "https://images.unsplash.com/photo-1610397095767-84a5b4736cbd?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"}`}
+                                alt=""
+                            />
+                        </Badge>
+                        <span className="hidden sm:inline">{currentUser?.username}</span>
+                    </>
+                ) : (
+                    <Link
+                        className="block px-4 py-2 space-x-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                        to='/login'
+                    >
+                        <LoginIcon />
+                        Giriş yap
+                    </Link>
+                )}
             </button>
             {isOpen && (
-                <div className="absolute z-50   py-2  bg-white rounded-md shadow-lg">
-
-
-                    {
-                        currentUser &&
+                <div className="absolute z-50 py-2 bg-white rounded-md shadow-lg">
+                    {currentUser && (
                         <Link
-                            className="block px-4 py-2 text-center text-sm  text-gray-700 hover:bg-gray-100 hover:text-rose-500"
-                            to='/cart'>
+                            className="block px-4 py-2 text-center text-sm text-gray-700 hover:bg-gray-100 hover:text-rose-500"
+                            to='/cart'
+                        >
                             <Badge
                                 badgeContent={`${totalQantity}`}
-                                color='error'
-                                className='cursor-pointer   hover:text-rose-600 mx-5'
+                                color="error"
+                                className="cursor-pointer hover:text-rose-600 mx-5"
                             >
-                                <ShoppingCart/>
+                                <ShoppingCart />
                             </Badge>
-                            sepet
-                        </Link>}
-
-
-                    {
-                        currentUser && <div>
+                            Sepet
+                        </Link>
+                    )}
+                    {currentUser && (
+                        <div>
                             <Link
                                 className="block text-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-rose-500"
-                                to='/profile'>
+                                to='/profile'
+                            >
                                 <Badge
                                     color='primary'
                                     className='cursor-pointer mx-5 hover:text-rose-600'
                                 >
-                                    <Person2/>
+                                    <Person2 />
                                 </Badge>
-                                Profile
+                                Profil
                             </Link>
-                            {/* <Link onClick={logoutHandler} to='/' className='mx-5'><Logout /></Link> */}
                         </div>
-
-                    }
-                    {
-                        currentUser?.isAdmin &&
+                    )}
+                    {currentUser?.isAdmin && (
                         <div>
-
                             <Link
                                 className="block text-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-rose-500"
-                                to='/admin'>
-
+                                to='/admin'
+                            >
                                 <Badge
                                     color='primary'
-                                    className='cursor-pointer  hover:text-rose-600 mx-5'
+                                    className='cursor-pointer hover:text-rose-600 mx-5'
                                 >
-
-                                    <AdminPanelSettingsIcon/>
-
+                                    <AdminPanelSettingsIcon />
                                 </Badge>
                                 Admin
                             </Link>
                         </div>
-                    }
-                    {
-                        currentUser &&
+                    )}
+                    {currentUser && (
                         <div>
                             <Link
                                 onClick={logoutHandler}
                                 className="block text-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-rose-500"
-                                to='/'>
-
+                                to='/'
+                            >
                                 <Badge
                                     color='primary'
-                                    className='cursor-pointer  hover:text-rose-600 mx-5'
+                                    className='cursor-pointer hover:text-rose-600 mx-5'
                                 >
-
-                                    <LogoutIcon/>
-
+                                    <LogoutIcon />
                                 </Badge>
-                                Logout
+                                Çıkış Yap
                             </Link>
                         </div>
-                    }
-                    {/* <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                    >
-                        Account
-                    </a>
-                    <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                    >
-                        Settings
-                    </a>
-                    <hr className="my-2 border-gray-200" />
-                    <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                    >
-                        Logout
-                    </a> */}
+                    )}
                 </div>
             )}
         </div>

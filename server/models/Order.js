@@ -3,44 +3,59 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const orderSchema = new Schema(
-  {
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true
+    {
+        userId: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
+        products: [
+            {
+                product: {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Product',
+                    required: true
+                },
+                quantity: {
+                    type: Number,
+                    required: true
+                }
+            }
+        ],
+        provider: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
+        amount: {
+            type: Number,
+            required: true
+        },
+        deliveryCode: {
+            type: Number
+        },
+        address: {
+            street: { type: String, required: true },
+            city: { type: String, required: true },
+            country: { type: String, required: true }
+        },
+        status: {
+            type: String,
+            default: "pending"
+        },
+        startDate: {
+            type: Date,
+            required: true
+        },
+        endDate: {
+            type: Date,
+            required: true
+        }
     },
-    products: {
-      type: Object,
-      required: true
-    },
-      
-    
-    provider: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true
-    },
-    amount: {
-      type: Number,
-      required: true
-    },
-    deliveryCode: {
-      type: Number,
-      
-    },
-    address: {
-      type: Object,
-      required: true
-    },
-    status: {
-      type: String,
-      default: "pending"
+    {
+        timestamps: true
     }
-  }, {
-  timestamps: true
-}
 );
-
 module.exports = mongoose.model('Order', orderSchema);
 
 /* const mongoose = require('mongoose');

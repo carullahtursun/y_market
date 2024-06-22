@@ -20,13 +20,13 @@ const LikeProduct = ({ userID }) => {
   }
 
   return (
-    <div>
-      <section className='pb-8 mx-6 grid gap-3 md:grid-cols-2 lg:grid-cols-4'>
-        {products.map((userProduct) => (
-          <Product useProducts={userProduct} />
-        ))}
-      </section>
-    </div>
+      <div>
+        <section className='pb-8 mx-6 grid gap-3 md:grid-cols-2 lg:grid-cols-4'>
+          {products.map((userProduct) => (
+              <Product key={userProduct._id} product={userProduct} />
+          ))}
+        </section>
+      </div>
   );
 };
 
