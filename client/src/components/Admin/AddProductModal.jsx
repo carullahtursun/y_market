@@ -134,11 +134,11 @@ function AddProductModal({ setOnClose }) {
                         )}
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-700">Açıklama</label>
-                        <input
+                        <label htmlFor="description"
+                               className="block mb-2 text-sm font-medium text-gray-700">Açıklama</label>
+                        <textarea
                             id="description"
                             name="description"
-                            type="text"
                             value={formik.values.description}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
@@ -150,7 +150,8 @@ function AddProductModal({ setOnClose }) {
                         )}
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-700">Kategori</label>
+                        <label htmlFor="category"
+                               className="block mb-2 text-sm font-medium text-gray-700">Kategori</label>
                         <select
                             id="category"
                             name="category"

@@ -35,25 +35,41 @@ module.exports.addProduct = async (req, res) => {
 
 module.exports.updateProduct = async (req, res) => {
   try {
-    const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.id,
-      {
-        title: req.body.title,
-        description: req.body.description,
-        price: req.body.price,
-        category: req.body.category,
-        image: req.body.image,
+    const updateFields = {
+      title: req.body.title,
+      description: req.body.description,
+      price: req.body.price,
+      category: req.body.category,
+      image: req.body.image,
+      // Ensure other fields are handled appropriately
+    };
 
-      },
-      {
-        new: true
-      });
+    // Filter out undefined fields
+    for (let key in updateFields) {
+      if (updateFields[key] === undefined) {
+        delete updateFields[key];
+      }
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+        req.params.id,
+        updateFields,
+        {
+          new: true
+        }
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
     res.status(200).json({
       message: "Product is updated successfully.",
       updatedProduct
     });
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -105,7 +121,7 @@ module.exports.getProducts = async (req, res) => {
     }
 
     // Execute the Sequelize findAll query, passing in the where clause and any desired limit
-    const products = await Product.find(whereClause);
+    const products = await Product.find(whereClause).populate('category');
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({

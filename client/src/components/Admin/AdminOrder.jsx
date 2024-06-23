@@ -3,10 +3,13 @@ import { toast } from 'react-toastify';
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 import axios from "axios";
 import AdminOrderDetail from "./AdminOrderDetail";
 import Loading from "../Loading";
+import {eachDayOfInterval} from "date-fns";
 
 function AdminOrder({ setIsOpen }) {
   const queryClient = useQueryClient();
@@ -64,6 +67,17 @@ function AdminOrder({ setIsOpen }) {
 
   if (isLoading) return <Loading />;
   if (isError) return <div>An error has occurred: {error.message}</div>;
+
+  const getRentedDates = (orders) => {
+    let rentedDates = [];
+    orders.forEach(order => {
+      eachDayOfInterval({ start: new Date(order.startDate), end: new Date(order.endDate) }).forEach(date => {
+        rentedDates.push(date);
+      });
+    });
+    return rentedDates;
+  };
+
   console.log(orders);
 
   const renderOrderStatus = (order) => {
@@ -84,7 +98,7 @@ function AdminOrder({ setIsOpen }) {
             </button>
           </div>
       );
-    } else if (order.status === "Reddedildi") {
+    } else if (order.status === "Reddedildi" || order.status === "İptal Edildi") {
       return (
           <div className="mt-2 flex gap-2">
             <button className="group text-sm inline-flex w-full items-center justify-center rounded-md bg-sky-500 px-2 py-3 font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800">
@@ -189,7 +203,7 @@ function AdminOrder({ setIsOpen }) {
                           <div className="mt-6 border-t border-b py-2">
                             <div className="">
                               <p className="text-sm text-gray-700">
-                                <span>Username: </span>
+                                <span>Adı: </span>
                                 {order?.userId?.username}
                               </p>
                               <p className="text-sm text-gray-700">
@@ -201,8 +215,10 @@ function AdminOrder({ setIsOpen }) {
                           <div className="mt-2 flex items-center justify-between">
                             <p className="text-sm font-medium text-gray-900">Durum:</p>
                             <div className="flex flex-row justify-center items-center gap-1">
-                              <div className={`${order.status === "Reddedildi" ? "bg-sky-500" : "bg-teal-500"} h-2 w-2 rounded-full`}></div>
-                              <span className={`${order.status === "Reddedildi" ? "text-sky-500" : "text-teal-500"} text-xs font-normal`}>
+                              <div
+                                  className={`${order.status === "Reddedildi" ? "bg-sky-500" : "bg-teal-500"} h-2 w-2 rounded-full`}></div>
+                              <span
+                                  className={`${order.status === "Reddedildi" ? "text-sky-500" : "text-teal-500"} text-xs font-normal`}>
                             {order.status}
                           </span>
                             </div>

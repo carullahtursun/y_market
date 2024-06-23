@@ -89,7 +89,7 @@ const SingleProduct = () => {
                 </button>
               </div>
               <div className="flex items-center justify-between mb-6">
-                <span className="text-3xl font-bold text-gray-900">${product.price}.00</span>
+                <span className="text-3xl font-bold text-gray-900">₺{product.price}.00</span>
                 <div className="flex space-x-4">
                   <button
                       onClick={addToCartHandler}
@@ -109,7 +109,7 @@ const SingleProduct = () => {
                     <h2 className="text-2xl font-bold">Kapınıza Teslim</h2>
                     <p className="mt-2 text-gray-700">2-3 gün içinde adresinize ücretsiz teslimat yapıyoruz.</p>
                     <h2 className="mt-8 text-2xl font-bold">Müşteri Memnuniyeti</h2>
-                    <p className="mt-2 text-gray-700">Düşük fiyat, yüksek kalite sunuyoruz ve $100 üzeri siparişlerde
+                    <p className="mt-2 text-gray-700">Düşük fiyat, yüksek kalite sunuyoruz ve ₺100 üzeri siparişlerde
                       ücretsiz teslimat seçeneği sunuyoruz.</p>
                   </div>
                   <div className="mt-8">

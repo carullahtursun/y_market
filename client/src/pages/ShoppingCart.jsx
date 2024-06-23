@@ -38,7 +38,6 @@ const ShoppingCart = () => {
     startDate: null,
     endDate: null,
   });
-  console.log("formState",formState)
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -87,6 +86,7 @@ const ShoppingCart = () => {
   };
 
   const createOrder = async () => {
+    console.log("formState",formState)
     try {
       const response = await axios.post(
           `http://localhost:5000/api/orders`,

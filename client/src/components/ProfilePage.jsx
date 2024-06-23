@@ -47,7 +47,7 @@ function ProfilePage({ UserID }) {
                             </div>
                             <div className="relative">
                                 <div className="w-48 h-48 bg-indigo-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500">
-                                    <img className="w-full h-full rounded-full object-cover" src={users?.image} alt="User Avatar" />
+                                    <img className="w-full h-full rounded-full object-cover" src={users?.image ||"https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png"} alt="User Avatar" />
                                 </div>
                             </div>
                             <div className="space-x-8 flex justify-center mt-32 md:mt-0">

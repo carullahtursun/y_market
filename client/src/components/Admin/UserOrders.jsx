@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 function UserOrders() {
     const { currentUser } = useSelector((store) => store.auth);
     const { token } = useSelector((state) => state.auth);
+    const queryClient = useQueryClient();
 
     const {
         isLoading,
@@ -22,13 +23,30 @@ function UserOrders() {
         }),
     });
 
+    const cancelOrderMutation = useMutation(
+        async (orderId) => {
+            const response = await axios.patch(`http://localhost:5000/api/orders/${orderId}`, { status: "İptal Edildi" }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        },
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries('orders');
+                toast.success('Sipariş başarıyla iptal edildi');
+            },
+            onError: () => {
+                toast.error('Sipariş iptal edilirken bir hata oluştu');
+            }
+        }
+    );
+
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div>An error has occurred: {error.message}</div>;
 
-    console.log(orders)
     const userOrders = orders.data.filter(order => order.userId._id === currentUser._id);
-
-    console.log(userOrders)
 
     return (
         <div className="m-3 text-xl text-gray-900 font-semibold w-full overflow-hidden">
@@ -41,7 +59,6 @@ function UserOrders() {
                         <thead className="text-xs sticky top-0 text-gray-700 uppercase bg-gray-50">
                         <tr className='text-start'>
                             <th scope="col" className="text-start px-6 py-3">Ürün</th>
-                            <th scope="col" className="text-start px-6 py-3">Satıcı</th>
                             <th scope="col" className="text-start px-6 py-3">Adres</th>
                             <th scope="col" className="text-start px-6 py-3">Durum</th>
                             <th scope="col" className="text-start px-6 py-3">Fiyat</th>
@@ -65,16 +82,7 @@ function UserOrders() {
                                         ))}
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 font-semibold text-gray-900">
-                                    <div>
-                                        <span className="font-medium">Adı:</span> <span
-                                        className='text-teal-600'>{order.provider.username}</span>
-                                    </div>
-                                    <div>
-                                        <span className="font-medium">Email:</span> {order.provider.email}
-                                    </div>
 
-                                </td>
                                 <td className="px-6 py-4 font-semibold text-gray-900">
                                     <div>
                                         <span className="font-medium">Ülke:</span> {order.address.country}
@@ -91,9 +99,9 @@ function UserOrders() {
                                 <td className="px-6 py-4 font-semibold text-gray-900">
                                     <div className='flex gap-1 items-center'>
                                         <div
-                                            className={`${order.status === "Reddedildi" ? "bg-sky-500 h-2 w-2 rounded-full" : "bg-teal-500 h-2 w-2 rounded-full"}`}></div>
+                                            className={`${order.status === "Reddedildi" || order.status === "İptal Edildi" ? "bg-sky-500 h-2 w-2 rounded-full" : "bg-teal-500 h-2 w-2 rounded-full"}`}></div>
                                         <span
-                                            className={`${order.status === "Reddedildi" ? "text-xs font-normal text-sky-500" : "text-xs font-normal text-teal-500"}`}>{order.status}</span>
+                                            className={`${order.status === "Reddedildi" || order.status === "İptal Edildi" ? "text-xs font-normal text-sky-500" : "text-xs font-normal text-teal-500"}`}>{order.status}</span>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 font-semibold text-gray-900">₺{order.amount}.00</td>
@@ -105,7 +113,9 @@ function UserOrders() {
                                     {order.status === "Bekleniyor" && (
                                         <div className="mt-2 flex gap-2">
                                             <button
-                                                className="group text-sm inline-flex w-full items-center justify-center rounded-md bg-teal-500 px-2 py-3 font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800">
+                                                className="group text-sm inline-flex w-full items-center justify-center rounded-md bg-red-500 px-2 py-3 font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800"
+                                                onClick={() => cancelOrderMutation.mutate(order._id)}
+                                            >
                                                 İptal Et
                                             </button>
                                         </div>
@@ -114,23 +124,31 @@ function UserOrders() {
                                         <div className="mt-2 flex gap-2">
                                             <div
                                                 className="group text-sm inline-flex w-full items-center justify-center rounded-md bg-sky-500 px-2 py-3 font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800">
-                                                Spariş İptal edildi
+                                                Sipariş İptal edildi
                                             </div>
                                         </div>
                                     )}
-                                    {order.status === "Şpariş Hazır" && (
+                                    {order.status === "İptal Edildi" && (
+                                        <div className="mt-2 flex gap-2">
+                                            <div
+                                                className="group text-sm inline-flex w-full items-center justify-center rounded-md bg-sky-500 px-2 py-3 font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800">
+                                                Sipariş İptal edildi
+                                            </div>
+                                        </div>
+                                    )}
+                                    {order.status === "Sipariş Hazır" && (
                                         <div className="mt-2 flex flex-col items-center justify-center h-full gap-2">
-                                            <div>Spariş Teslim Kodu <span
+                                            <div>Sipariş Teslim Kodu <span
                                                 className='text-sky-500'>#{order.deliveryCode}</span></div>
                                             <span
-                                                className='text-center'>Bu kod ile sparişinizi teslim alabilirsiniz</span>
+                                                className='text-center'>Bu kod ile siparişinizi teslim alabilirsiniz</span>
                                         </div>
                                     )}
                                     {order.status === "Hazırlanıyor" && (
                                         <div className="mt-2 flex gap-2">
                                             <div
                                                 className="group text-sm inline-flex w-full items-center justify-center rounded-md bg-sky-500 px-2 py-3 font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800">
-                                                Spariş Hazırlanıyor
+                                                Sipariş Hazırlanıyor
                                             </div>
                                         </div>
                                     )}

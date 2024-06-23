@@ -38,16 +38,12 @@ function TabProduct({ userID }) {
 
                 </button>
                 {
-                    !currentUser.isAdmin && 
-
                         <button
                             className={` p-4 rounded  ${isClick == 2 ? 'bg-sky-500 text-white ' : 'bg-white text-black'} shadow-md flex items-center justify-center`}
                             onClick={(e) => setIsClick(2)}
                         >
                             <Inventory />
-                            Spariş
                         </button>
-                    
                 }
 
             </div>
@@ -65,8 +61,6 @@ function TabProduct({ userID }) {
             }
 
             {
-              
-
                     isClick == 2 && <div className='mt-5'>
 
                         <UserOrders userID={userID} />

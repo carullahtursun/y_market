@@ -148,10 +148,8 @@ function AdminOrderDetail({ isOpen, setIsOpen }) {
                                             </label>
                                             <DatePicker
                                                 selected={new Date()}
-                                                onChange={() => {
-                                                }}
-                                                highlightDates={[{'react-datepicker__day--highlighted': rentedDates}]}
                                                 inline
+                                                highlightDates={rentedDates}
                                             />
                                         </div>
                                         <div className="mt-4">

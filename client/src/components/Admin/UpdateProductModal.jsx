@@ -97,11 +97,12 @@ function UpdateProductModal({ setOnClose, product, productId }) {
                         const userData = { ...formik.values, image: downloadURL };
                         mutate(userData, {
                             onSuccess: () => {
+                                queryClient.invalidateQueries("products");
                                 toast.success("Ürün başarıyla güncellendi");
                                 setOnClose(false);
                             },
                             onError: () => {
-                                toast.error("Form gönderilirken bir hata oluştu");
+                                toast.error("Ürün güncellenirken bir hata oluştu");
                             },
                         });
                     });
@@ -162,11 +163,11 @@ function UpdateProductModal({ setOnClose, product, productId }) {
                         )}
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-700">Açıklama</label>
-                        <input
+                        <label htmlFor="description"
+                               className="block mb-2 text-sm font-medium text-gray-700">Açıklama</label>
+                        <textarea
                             id="description"
                             name="description"
-                            type="text"
                             value={formik.values.description}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}

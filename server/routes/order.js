@@ -1,7 +1,7 @@
 const express = require('express');
 
 const { createOrder, updateOrder, deleteOrder, getUserOrderById, getOrders, getMonthlyIncome,getOrderByProviderId,
-     getProductOrders
+     getProductOrders, getDailyOrders
 } = require('../controllers/order');
 const { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin } = require('../middlewares/verifyToken');
 
@@ -11,7 +11,7 @@ const router = express.Router();
 router.post('/', createOrder);
 
 // PATCH => /api/orders/:id
-router.patch('/:id', verifyTokenAndAdmin, updateOrder);
+router.patch('/:id', updateOrder);
 
 // DELETE => /api/orders/:id
 router.delete('/:id', deleteOrder);
@@ -28,5 +28,7 @@ router.get('/', getOrders);
 router.get('/stats', verifyTokenAndAdmin, getMonthlyIncome);
 
 router.get('/product-orders/:productId', getProductOrders);
+
+router.get('/daily', getDailyOrders);
 
 module.exports = router;

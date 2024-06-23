@@ -6,7 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import UpdateProductModal from './UpdateProductModal';
 import AddProductModal from "./AddProductModal.jsx";
 
-const fetchUserProducts = async (userId) => {
+const fetchUserProducts = async () => {
     const response = await axios.get(`http://localhost:5000/api/products`);
     return response.data;
 };
@@ -20,8 +20,8 @@ function AdminProducts() {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
     const { data: products, isLoading, error } = useQuery(
-        ['userProducts', userId],
-        () => fetchUserProducts(userId),
+        ['userProducts'],
+        () => fetchUserProducts(),
         {
             staleTime: 1000 * 60 * 5, // 5 minutes
             cacheTime: 1000 * 60 * 60, // 1 hour
@@ -60,9 +60,10 @@ function AdminProducts() {
     if (error) {
         return <div>Error: {error.message}</div>;
     }
+    console.log(products)
 
     return (
-        <div className="m-3 text-xl text-gray-900 font-semibold w-full overflow-hidden py-4">
+        <div className="m-3 text-xl text-gray-900 font-semibold w-full overflow-hidden py-4 ">
             <div className="mt-6 lg:mt-0 lg:px-2">
                 <div className=" p-2 flex items-center justify-between text-sm tracking-widest uppercase">
                     <p className="text-gray-500 dark:text-gray-300 py-2">{products.length} Ürün</p>
@@ -73,12 +74,13 @@ function AdminProducts() {
                         Ürün Ekle
                     </button>
                 </div>
-                <div className="relative overflow-x-auto shadow-md sm:rounded-lg max-h-screen">
+                <div className="relative overflow-x-auto shadow-md sm:rounded-lg max-h-screen pb-32">
                     <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead className="text-xs sticky top-0 text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th scope="col" className="px-6 py-3">Fotoğraf</th>
                             <th scope="col" className="px-6 py-3">Ürün Adı</th>
+                            <th scope="col" className="px-6 py-3">Ürün Türü</th>
                             <th scope="col" className="px-6 py-3">Ürün Açıklaması</th>
                             <th scope="col" className="px-6 py-3">Fiyat</th>
                             <th scope="col" className="px-6 py-3 text-center">İşlem</th>
@@ -89,10 +91,13 @@ function AdminProducts() {
                             <tr key={key} className="bg-white border-b h-full">
                                 <td className="w-16 p-4">
                                     <img src={product.image} alt={product.title}
-                                         className="object-cover w-full h-16 rounded-md"/>
+                                         className="object-cover w-full h-32 rounded-md"/>
                                 </td>
                                 <td className="px-6 py-4 font-semibold text-gray-900">
                                     {product.title}
+                                </td>
+                                <td className="px-6 py-4 font-semibold text-gray-900">
+                                    {product.category.name}
                                 </td>
                                 <td className="px-6 py-4 text-black max-w-xs">
                                     <p>{product.description}</p>

@@ -25,15 +25,15 @@ function Footer() {
                             <p className="font-medium">Bize Ulaşın</p>
                             <div className="mt-4 flex items-center">
                                 <Place className="mr-2"/>
-                                Gültepe Mahallesi, Türe Sokak, No: 24, Küçükçekmece / İstanbul
+                                Deneme Mahallesi, Deneme Sokak, No: 24, Meram / Konya
                             </div>
                             <div className="mt-3 flex items-center">
                                 <LocalPhone className="mr-2"/>
-                                <a href="tel:+905050148044">Tel: +90 (505) 014 8044</a>
+                                <a href="tel:+0555555555">Tel: +90 (505) 014 8044</a>
                             </div>
                             <div className="mt-3 flex items-center">
                                 <MailOutline className="mr-2"/>
-                                <a href="mailto:binote@gmail.com">Email: binote@gmail.com</a>
+                                <a href="mailto:isim@gmail.com">Email: binote@gmail.com</a>
                             </div>
                         </div>
                         <div className="col-span-1">

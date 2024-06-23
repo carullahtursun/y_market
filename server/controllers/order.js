@@ -160,6 +160,33 @@ exports.getProductOrders = async (req, res) => {
   }
 };
 
+module.exports.getDailyOrders = async (req, res) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
+  try {
+    const dailyOrders = await Order.find({
+      createdAt: {
+        $gte: today,
+        $lt: tomorrow
+      }
+    }).populate('products.product').populate('userId');
+
+    const totalAmount = dailyOrders.reduce((total, order) => total + order.amount, 0);
+
+    res.status(200).json({
+      count: dailyOrders.length,
+      totalAmount,
+      dailyOrders
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 
 /* module.exports.updateOrder = async (req, res) => {
   try {
