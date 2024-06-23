@@ -29,7 +29,7 @@ const Navbar = () => {
       <>
           <nav className="flex justify-between items-center max-w-screen-xl mx-auto p-4">
             <h1 className='font-bold text-4xl uppercase flex items-center justify-center px-4 tracking-wider'>
-              <a href='/'> <span className='text-sky-500'>IS</span>IM</a>
+              <a href='/'> <span className='text-sky-500'>KIT</span>KAT</a>
             </h1>
             <div className="flex items-center">
               <UserDropdownMenu currentUser={currentUser} totalQantity={cart?.totalQantity} />

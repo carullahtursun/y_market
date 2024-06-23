@@ -36,7 +36,7 @@ const Carousel = () => {
             <div className="absolute top-0 left-0 w-full h-full bg-black/30" />
             <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center text-white uppercase px-4 text-center">
                 <h1 className="text-4xl md:text-6xl font-bold mb-8">
-                    Lorem ipsum dolor sit amet.
+                    Kitaplarımızda yaşanmışlık var...
                 </h1>
                 <Formik initialValues={{ search: '' }} onSubmit={() => { }}>
                     <Form className="relative w-full max-w-md">

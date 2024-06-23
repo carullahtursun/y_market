@@ -9,10 +9,10 @@ const OrderSuccessModal = ({ isOpen, onClose,setIsOpen }) => {
             <div className="bg-white rounded-lg shadow-lg p-6 mx-4">
                 <div className='flex flex-col items-center justify-center w-full'>
 
-                    <h2 className="text-2xl font-bold mb-4">Order Successful!</h2>
+                    <h2 className="text-2xl font-bold mb-4">Sipariş Başarılı!</h2>
                     <img src="/blob.svg" alt="Order Success" className="mb-4 w-72" />
                     <p className="mb-4 w-1/2 text-center font-urbanist">
-                        Thank you for your order. We appreciate your business and look forward to serving you again in the future.
+                        Siparişiniz için teşekkür ederiz. İşletmenizi takdir ediyoruz ve gelecekte size tekrar hizmet vermeyi sabırsızlıkla bekliyoruz.
                     </p>
                     <button
                         className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"

@@ -22,7 +22,7 @@ function ContactUs() {
 
                         <h2 className="mt-4 text-lg font-medium text-gray-800">Email</h2>
                         <p className="mt-2 text-gray-500 ">Ekibimiz yardım etmek için burada.</p>
-                        <p className="mt-2 text-sky-500 "> binote@gmail.com</p>
+                        <p className="mt-2 text-sky-500 "> isim@gmail.com</p>
                     </div>
 
                     <div className="flex flex-col items-center justify-center text-center">
@@ -47,7 +47,7 @@ function ContactUs() {
 
                         <h2 className="mt-4 text-lg font-medium text-gray-800">İletişim</h2>
                         <p className="mt-2 text-gray-500 ">Pzt-Cuma sabah 8'den akşam 5'e kadar.</p>
-                        <p className="mt-2 text-sky-500 ">+90 (505) 014 8044</p>
+                        <p className="mt-2 text-sky-500 ">+90 (505) 555 4555</p>
                     </div>
                 </div>
             </div>

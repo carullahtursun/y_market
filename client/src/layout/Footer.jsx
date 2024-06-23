@@ -10,7 +10,7 @@ function Footer() {
             <div className="bg-sky-500">
                 <div className="container mx-auto px-5 pt-[20px] pb-[48px] lg:px-[60px] lg:pt-[70px]">
                     <a className="inline-flex text-3xl font-bold" href="#">
-                        <span className='text-white'>IS</span>IM
+                        <span className='text-white'>KIT</span>KAT
                     </a>
                     <div className="mt-8 grid grid-cols-1 gap-12 text-white lg:grid-cols-3">
                         <div>
@@ -33,7 +33,7 @@ function Footer() {
                             </div>
                             <div className="mt-3 flex items-center">
                                 <MailOutline className="mr-2"/>
-                                <a href="mailto:isim@gmail.com">Email: binote@gmail.com</a>
+                                <a href="mailto:isim@gmail.com">Email: isim@gmail.com</a>
                             </div>
                         </div>
                         <div className="col-span-1">

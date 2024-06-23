@@ -202,7 +202,7 @@ const ShoppingCart = () => {
                 </div>
                 </div>
                 <div className='mb-8'>
-                  <label className='block mb-2 font-medium'>Sokak Adresi:</label>
+                  <label className='block mb-2 font-medium'>Tam Adres:</label>
                   <input
                       type='text'
                       name='street'
