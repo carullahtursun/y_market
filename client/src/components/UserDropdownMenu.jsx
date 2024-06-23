@@ -34,7 +34,7 @@ function UserDropdownMenu({ currentUser, totalQantity }) {
                 {currentUser ? (
                     <>
                         <Badge
-                            badgeContent={`${totalQantity || 0}`}
+                            badgeContent={`${cart?.totalQuantity}`}
                             color="error"
                             className="cursor-pointer hover:text-rose-600 mx-5"
                         >
@@ -64,7 +64,7 @@ function UserDropdownMenu({ currentUser, totalQantity }) {
                             to='/cart'
                         >
                             <Badge
-                                badgeContent={`${totalQantity}`}
+                                badgeContent={`${cart?.totalQuantity}`}
                                 color="error"
                                 className="cursor-pointer hover:text-rose-600 mx-5"
                             >

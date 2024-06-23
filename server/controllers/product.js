@@ -11,7 +11,7 @@ module.exports.addProduct = async (req, res) => {
       price: req.body.price,
       category: req.body.category,
       image: req.body.image,
-      pdf: req.file.filename,
+      pdf: null,
       userID: req.body.userID,
       likes: req.body.like,
       isShow:req.body.isShow,

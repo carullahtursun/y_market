@@ -11,7 +11,8 @@ import { SlBasket } from "react-icons/sl";
 import {FiLogOut, FiShoppingCart } from "react-icons/fi";
 import { Link, Switch, Route } from "react-router-dom";
 import AdminHeader from "../components/Admin/AdminHeader";
-
+import { MdOutlineCategory } from "react-icons/md";
+import { BsBasket2 } from "react-icons/bs";
 import { publicRequest } from '../request-methods';
 
 function AdminSidebar() {
@@ -40,7 +41,8 @@ function AdminSidebar() {
     const menus = [
         { name: "dashboard", link: "/admin", icon: MdOutlineDashboard },
         { name: "Ürünler", link: "/admin/product", icon: FiShoppingCart },
-        { name: "Siparişler", link: "/admin/order", icon: SlBasket },
+        { name: "Kategoriler", link: "/admin/categories", icon: MdOutlineCategory },
+        { name: "Siparişler", link: "/admin/order", icon: BsBasket2 },
         { name: "Çıkış", link: "/", icon: FiLogOut },
     ];
     const [open, setOpen] = useState(true);
@@ -60,14 +62,7 @@ function AdminSidebar() {
                             <div className="text-sm text-gray-500 dark:text-gray-400">Joined in August 2014</div>
                         </div>
                     </div>
-                    <div>
 
-                        <HiMenuAlt3
-                            size={26}
-                            className="cursor-pointer"
-                            onClick={() => setOpen(!open)}
-                        />
-                    </div>
                 </div>
                 {menus?.map((menu, i) => (
                     <Link

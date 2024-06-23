@@ -7,14 +7,19 @@ import { useQuery } from "@tanstack/react-query";
 import { publicRequest } from '../request-methods';
 import { removeFromCart, decreaseCart, addToCart, getTotals } from '../store/cart-slice';
 
-import Navbar from '../layout/Navbar';
-import Announcement from '../layout/Announcement';
-import Footer from '../layout/Footer';
-import Newsletter from '../components/Newsletter';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import Pdfviewer from '../components/Pdfviewer';
 import axios from 'axios';
-const fetchProducts = async (id) => {
+
+
+const fetchProduct = async (id) => {
   const response = await axios.get(`http://localhost:5000/api/products/${id}`);
+  return response.data;
+};
+
+const fetchProductOrders = async (id) => {
+  const response = await axios.get(`http://localhost:5000/api/orders/product-orders/${id}`);
   return response.data;
 };
 
@@ -24,19 +29,35 @@ const SingleProduct = () => {
   const dispatch = useDispatch();
   const [quantity, setQuantity] = useState(1);
 
+  const { data: product, isLoading: productLoading, isError: productError } = useQuery(['product', id], () => fetchProduct(id));
+  const { data: orders, isLoading: ordersLoading, isError: ordersError } = useQuery(['productOrders', id], () => fetchProductOrders(id));
+
+  if (productLoading || ordersLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (productError || ordersError) {
+    return <div>Error loading product</div>;
+  }
+
   const addToCartHandler = () => {
     dispatch(addToCart({ ...product, quantity }));
   };
 
-  const { data: product, isLoading, isError } = useQuery(['product', id], () => fetchProducts(id));
+  const getRentedDates = (orders) => {
+    let rentedDates = [];
+    orders.forEach(order => {
+      let currentDate = new Date(order.startDate);
+      let endDate = new Date(order.endDate);
+      while (currentDate <= endDate) {
+        rentedDates.push(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    });
+    return rentedDates;
+  };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError) {
-    return <div>Error loading product</div>;
-  }
+  const rentedDates = getRentedDates(orders);
 
   return (
       <section className="py-16 px-8 bg-gray-50">
@@ -46,7 +67,6 @@ const SingleProduct = () => {
               <img className="w-full max-w-lg rounded-lg shadow-lg object-cover" src={product.image} alt={product.title} />
             </div>
           </div>
-
           <div className="lg:col-span-3">
             <div className="p-8 bg-white rounded-lg shadow-lg">
               <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.title}</h1>
@@ -80,32 +100,34 @@ const SingleProduct = () => {
                     </svg>
                     Sepete Ekle
                   </button>
-                  {product?.isShow && (
-                      <button
-                          onClick={() => setModal(true)}
-                          className="flex items-center px-6 py-3 bg-blue-500 text-white text-lg font-semibold rounded-md hover:bg-blue-600 transition"
-                      >
-                        PDF Görüntüle
-                      </button>
-                  )}
                 </div>
               </div>
-              <div className="border-t pt-6">
-                <nav className="flex space-x-8">
-                  <a href="#" className="text-sm font-medium text-gray-900 border-b-2 border-gray-900 py-4">Açıklama</a>
-                </nav>
-                <div className="mt-8">
-                  <h2 className="text-2xl font-bold">Kapınıza Teslim</h2>
-                  <p className="mt-2 text-gray-700">2-3 gün içinde adresinize ücretsiz teslimat yapıyoruz.</p>
-                  <h2 className="mt-8 text-2xl font-bold">Müşteri Memnuniyeti</h2>
-                  <p className="mt-2 text-gray-700">Düşük fiyat, yüksek kalite sunuyoruz ve $100 üzeri siparişlerde ücretsiz teslimat seçeneği sunuyoruz.</p>
+              <div className="border-t ">
+                <div className={"grid grid-cols-2"}>
+
+                  <div className="mt-8">
+                    <h2 className="text-2xl font-bold">Kapınıza Teslim</h2>
+                    <p className="mt-2 text-gray-700">2-3 gün içinde adresinize ücretsiz teslimat yapıyoruz.</p>
+                    <h2 className="mt-8 text-2xl font-bold">Müşteri Memnuniyeti</h2>
+                    <p className="mt-2 text-gray-700">Düşük fiyat, yüksek kalite sunuyoruz ve $100 üzeri siparişlerde
+                      ücretsiz teslimat seçeneği sunuyoruz.</p>
+                  </div>
+                  <div className="mt-8">
+                    <h2 className="text-2xl font-bold mb-4">Kiralama Takvimi</h2>
+                    <DatePicker
+                        selected={null}
+                        inline
+                        highlightDates={rentedDates}
+
+                    />
+                  </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
-
-        <Pdfviewer product={product} isvisible={modal} onClose={() => setModal(false)} />
+        <Pdfviewer product={product} isvisible={modal} onClose={() => setModal(false)}/>
       </section>
   );
 };

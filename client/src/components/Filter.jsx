@@ -1,7 +1,17 @@
-import {useState} from 'react';
+import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
+import axios from "axios";
+import {useQuery} from "@tanstack/react-query";
 const Filter = ({ setTitle ,category, setCategory}) => {
+    const fetchCategories = async () => {
+        const response = await axios.get('http://localhost:5000/api/categories');
+        return response.data;
+    };
 
+    const { data: categories } = useQuery(['categories'], fetchCategories, {
+        staleTime: 1000 * 60 * 5,
+        cacheTime: 1000 * 60 * 60,
+    });
 
   function handleCategoryChange(e) {
     setCategory(e.target.value);
@@ -12,7 +22,7 @@ const Filter = ({ setTitle ,category, setCategory}) => {
   }
 
   return (
-      <div className="flex flex-col items-center mb-4">
+      <div className="flex flex-col items-center mb-4 mt-6">
         <div className="flex items-center justify-between w-full px-5 mb-2">
           <p className="font-medium text-xl">Filtreler</p>
         </div>
@@ -29,9 +39,9 @@ const Filter = ({ setTitle ,category, setCategory}) => {
               onChange={handleCategoryChange}
           >
             <option value="">Tüm Kategoriler</option>
-            <option value="kitaplar">Kitaplar</option>
-            <option value="yayin">Yayınlar</option>
-            <option value="notlar">Notlar</option>
+              {categories && categories.map((category) => (
+                  <option key={category._id} value={category._id}>{category.name}</option>
+              ))}
           </select>
         </div>
       </div>

@@ -22,11 +22,12 @@ const ShoppingCart = () => {
   const { token } = useSelector((state) => state.auth);
   const userId = useSelector((store) => store.auth.currentUser._id);
   const [onClose, setOnClose] = useState(false);
-  console.log("cart",cart)
+
   const [formState, setFormState] = useState({
     userId: userId,
     products: cart?.cartItems,
     amount: cart?.totalPrice,
+    totalQuantity: cart?.totalQuantity,
     address: {
       street: '',
       city: '',
@@ -34,10 +35,10 @@ const ShoppingCart = () => {
     },
     status: 'Bekleniyor',
     deliveryCode: '',
-    provider: cart?.cartItems[0]?.userID,
     startDate: null,
     endDate: null,
   });
+  console.log("formState",formState)
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [isOpen, setIsOpen] = useState(false);

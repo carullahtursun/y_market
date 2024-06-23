@@ -2,7 +2,7 @@ const Order = require('../models/Order');
 const Product = require('../models/Product');
 
 module.exports.createOrder = async (req, res) => {
-  const { userId, products, provider, amount, address, status, deliveryCode, startDate, endDate } = req.body;
+  const { userId, products, amount,totalQuantity, address, status, deliveryCode, startDate, endDate } = req.body;
   console.log(req.body);
   try {
     const order = new Order({
@@ -11,7 +11,7 @@ module.exports.createOrder = async (req, res) => {
         product: item._id,
         quantity: item.cartQuantity
       })),
-      provider,
+      totalQuantity,
       amount,
       address,
       status,
@@ -36,21 +36,24 @@ module.exports.updateOrder = async (req, res) => {
     const order = await Order.findById(id);
 
     if (!order) {
-      res.status(404).json({ message: 'Order not found' });
-    } else {
-      order.userId = userId || order.userId;
-      order.products = products.map(item => ({
-        product: item._id,
-        quantity: item.cartQuantity
-      })) || order.products;
-      order.provider = provider || order.provider;
-      order.amount = amount || order.amount;
-      order.address = address || order.address;
-      order.status = status || order.status;
-      order.deliveryCode = deliveryCode || order.deliveryCode;
-      const updatedOrder = await order.save();
-      res.json(updatedOrder);
+      return res.status(404).json({ message: 'Order not found' });
     }
+
+    if (userId) order.userId = userId;
+    if (products && products.length > 0) {
+      order.products = products.map(item => ({
+        product: item.product || item._id,
+        quantity: item.quantity || item.cartQuantity || 1
+      }));
+    }
+    if (provider) order.provider = provider;
+    if (amount) order.amount = amount;
+    if (address) order.address = address;
+    if (status) order.status = status;
+    if (deliveryCode) order.deliveryCode = deliveryCode;
+
+    const updatedOrder = await order.save();
+    res.json(updatedOrder);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
@@ -72,7 +75,7 @@ module.exports.getUserOrderById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const order = await Order.findById(id).populate('products.product').populate('userId').populate("provider");
+    const order = await Order.findById(id).populate('products.product').populate('userId');
 
     if (!order) {
       res.status(404).json({ message: 'Order not found' });
@@ -87,7 +90,7 @@ module.exports.getUserOrderById = async (req, res) => {
 
 module.exports.getOrders = async (req, res) => {
   try {
-    const orders = await Order.find().populate('products.product').populate('userId').populate("provider");
+    const orders = await Order.find().populate('products.product').populate('userId');
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json(error);
@@ -139,6 +142,25 @@ module.exports.getMonthlyIncome = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
+
+
+exports.getProductOrders = async (req, res) => {
+  const { productId } = req.params;
+
+  try {
+    const orders = await Order.find({ 'products.product': productId });
+    const rentals = orders.map(order => ({
+      startDate: order.startDate,
+      endDate: order.endDate,
+    }));
+    res.json(rentals);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
 /* module.exports.updateOrder = async (req, res) => {
   try {
     const updatedOrder = await Order.findByIdAndUpdate(

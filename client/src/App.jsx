@@ -27,6 +27,7 @@ import Contact from './pages/Contact';
 import Announcement from './layout/Announcement';
 import Navbar from './layout/Navbar';
 import Footer from './layout/Footer';
+import AdminCategories from "./components/Admin/AdminCategories.jsx";
 
 const App = () => {
 
@@ -113,6 +114,15 @@ const App = () => {
                             <AdminSidebar />
                             <div className='w-full  px-6 h-screen overflow-hidden '>
                               <AdminProducts />
+                            </div>
+                          </section>
+
+                        </Route>
+                        <Route path='/admin/categories'>
+                          <section className=" flex  w-full  ">
+                            <AdminSidebar />
+                            <div className='w-full  px-6 h-screen overflow-hidden '>
+                              <AdminCategories />
                             </div>
                           </section>
 

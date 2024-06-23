@@ -22,12 +22,11 @@ const orderSchema = new Schema(
                 }
             }
         ],
-        provider: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
+        amount: {
+            type: Number,
             required: true
         },
-        amount: {
+        totalQuantity: {
             type: Number,
             required: true
         },

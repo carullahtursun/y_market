@@ -1,20 +1,40 @@
-import  React, { useState } from "react";
-import {useQuery, useMutation, useQueryClient} from "@tanstack/react-query";
+import React, { useState } from "react";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import app from "../../../firebase";
-import { publicRequest } from "../../request-methods";
-import { ToastContainer, toast } from "react-toastify";
-// Modal component
-function UpdateProductModal({ setOnClose, product, productId }) {
+import { toast } from "react-toastify";
+
+function AddProductModal({ setOnClose }) {
     const { token } = useSelector((state) => state.auth);
     const queryClient = useQueryClient();
-    const [previewImage, setPreviewImage] = useState(product?.image ?? "");
-    const [newCategory, setNewCategory] = useState("");
+    const [previewImage, setPreviewImage] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const addProduct = async (productData) => {
+        const response = await axios.post(`http://localhost:5000/api/products`, productData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    };
+
+    const { mutate } = useMutation(addProduct, {
+        onSuccess: () => {
+            queryClient.invalidateQueries("products");
+            toast.success("Ürün başarıyla eklendi");
+            setOnClose(false);
+            setIsSubmitting(false);
+        },
+        onError: () => {
+            toast.error("Ürün eklenirken bir hata oluştu");
+            setIsSubmitting(false);
+        },
+    });
 
     const fetchCategories = async () => {
         const response = await axios.get('http://localhost:5000/api/categories');
@@ -26,44 +46,13 @@ function UpdateProductModal({ setOnClose, product, productId }) {
         cacheTime: 1000 * 60 * 60,
     });
 
-    const updateUser = async (userData) => {
-        const response = await axios.put(`http://localhost:5000/api/products/${productId}`, userData, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        return response.data;
-    };
-
-    const addCategory = async (category) => {
-        const response = await axios.post('http://localhost:5000/api/categories', { name: category }, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        return response.data;
-    };
-
-    const { mutate: mutateCategory } = useMutation(addCategory, {
-        onSuccess: () => {
-            queryClient.invalidateQueries("categories");
-            toast.success("Kategori başarıyla eklendi");
-            setNewCategory("");
-        },
-        onError: () => {
-            toast.error("Kategori eklenirken bir hata oluştu");
-        },
-    });
-
-    const { mutate } = useMutation(updateUser);
-
     const formik = useFormik({
         initialValues: {
-            title: product?.title ?? "",
-            category: product?.category[0] ?? "",
-            description: product?.description ?? "",
-            price: product?.price ?? "",
-            image: product?.image ?? "",
+            title: "",
+            category: "",
+            description: "",
+            price: "",
+            image: "",
         },
         validationSchema: Yup.object({
             title: Yup.string().required("Başlık gereklidir"),
@@ -71,13 +60,17 @@ function UpdateProductModal({ setOnClose, product, productId }) {
             description: Yup.string().required("Açıklama gereklidir"),
             price: Yup.number().required("Fiyat gereklidir").positive("Fiyat pozitif bir sayı olmalıdır"),
         }),
-        onSubmit: async (values) => {
-            handleClick(values);
+        onSubmit: (values) => {
+            setIsSubmitting(true);
+            console.log(values)
+            handleSubmit(values);
         },
     });
 
-    const handleClick = async (values) => {
-        if (typeof values.image === "object") {
+
+
+    const handleSubmit = async (values) => {
+        if (values.image) {
             const imageName = "pp/" + values.image.name + new Date().getTime();
             const storage = getStorage(app);
             const storageRef = ref(storage, imageName);
@@ -91,33 +84,18 @@ function UpdateProductModal({ setOnClose, product, productId }) {
                 },
                 (error) => {
                     console.error(error);
+                    setIsSubmitting(false);
                 },
                 () => {
                     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                        const userData = { ...formik.values, image: downloadURL };
-                        mutate(userData, {
-                            onSuccess: () => {
-                                toast.success("Ürün başarıyla güncellendi");
-                                setOnClose(false);
-                            },
-                            onError: () => {
-                                toast.error("Form gönderilirken bir hata oluştu");
-                            },
-                        });
+                        const productData = { ...formik.values, image: downloadURL };
+                        mutate(productData);
                     });
                 }
             );
         } else {
-            const userData = { ...formik.values };
-            mutate(userData, {
-                onSuccess: () => {
-                    toast.success("Ürün başarıyla güncellendi");
-                    setOnClose(false);
-                },
-                onError: () => {
-                    toast.error("Form gönderilirken bir hata oluştu");
-                },
-            });
+            const productData = { ...formik.values };
+            mutate(productData);
         }
     };
 
@@ -133,17 +111,11 @@ function UpdateProductModal({ setOnClose, product, productId }) {
         }
     };
 
-    const handleAddCategory = () => {
-        if (newCategory.trim()) {
-            mutateCategory(newCategory.trim());
-        }
-    };
-
     return (
         <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full">
             <div className="absolute top-0 left-0 z-40 w-full h-full bg-gray-900 opacity-50"></div>
             <div className="z-50 w-1/2 px-6 py-4 bg-white rounded shadow-lg">
-                <h2 className="mb-4 text-xl font-bold">Ürünü Güncelle</h2>
+                <h2 className="mb-4 text-xl font-bold">Ürün Ekle</h2>
                 <form onSubmit={formik.handleSubmit} className="max-w-md mx-auto mt-4">
                     <div className="mb-4">
                         <label htmlFor="title" className="block mb-2 text-sm font-medium text-gray-700">Başlık</label>
@@ -178,26 +150,24 @@ function UpdateProductModal({ setOnClose, product, productId }) {
                         )}
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="category" className="block mb-2 text-sm text-gray-700">Kategori</label>
-                        <div className="flex items-center gap-2">
-                            <select
-                                id="category"
-                                name="category"
-                                value={formik.values.category}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="block w-full px-2 py-2  text-sm bg-white border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                            >
-                                {categories && categories.map((category) => (
-                                    <option key={category._id} value={category._id}>{category.name}</option>
-                                ))}
-                            </select>
-                        </div>
+                        <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-700">Kategori</label>
+                        <select
+                            id="category"
+                            name="category"
+                            value={formik.values.category}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            className="block w-full px-4 py-2 mt-2 text-sm bg-white border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                        >
+                            <option value="">Kategori seçin</option>
+                            {categories && categories.map((category) => (
+                                <option key={category._id} value={category._id}>{category.name}</option>
+                            ))}
+                        </select>
                         {formik.touched.category && formik.errors.category && (
                             <p className="mt-2 text-sm text-red-600">{formik.errors.category}</p>
                         )}
                     </div>
-
                     <div className="mb-4">
                         <label htmlFor="price" className="block mb-2 text-sm font-medium text-gray-700">Fiyat</label>
                         <input
@@ -231,7 +201,9 @@ function UpdateProductModal({ setOnClose, product, productId }) {
                     </div>
                     <div className="flex justify-end">
                         <button type="button" className="mr-4 px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300" onClick={() => setOnClose(false)}>İptal</button>
-                        <button type="submit" className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Kaydet</button>
+                        <button type="submit" className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600" disabled={isSubmitting}>
+                            {isSubmitting ? "Kaydediliyor..." : "Kaydet"}
+                        </button>
                     </div>
                 </form>
             </div>
@@ -239,4 +211,4 @@ function UpdateProductModal({ setOnClose, product, productId }) {
     );
 }
 
-export default UpdateProductModal;
+export default AddProductModal;

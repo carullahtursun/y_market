@@ -16,7 +16,6 @@ const ShoppingCategory = () => {
 
     return (
         <>
-            <Title>{`${category.charAt(0).toUpperCase()}${category.slice(1)}`}</Title>
             <Filter setTitle={setTitle} setCategory={setCategory} category={category} />
             <Products category={category} title={title} />
             <Newsletter />

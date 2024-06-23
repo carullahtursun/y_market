@@ -1,6 +1,8 @@
 const express = require('express');
 
-const { createOrder, updateOrder, deleteOrder, getUserOrderById, getOrders, getMonthlyIncome,getOrderByProviderId} = require('../controllers/order');
+const { createOrder, updateOrder, deleteOrder, getUserOrderById, getOrders, getMonthlyIncome,getOrderByProviderId,
+     getProductOrders
+} = require('../controllers/order');
 const { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin } = require('../middlewares/verifyToken');
 
 const router = express.Router();
@@ -24,5 +26,7 @@ router.get('/', getOrders);
 
 // GET => /api/orders/stats
 router.get('/stats', verifyTokenAndAdmin, getMonthlyIncome);
+
+router.get('/product-orders/:productId', getProductOrders);
 
 module.exports = router;
